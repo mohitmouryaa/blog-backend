@@ -1,9 +1,9 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-import { connectDb } from "../config/connect";
-import cookieParser from 'cookie-parser';
-import authRouter from '../routes/userAuth';
-import { errorHandler } from "../middleware";
+import { connectDb } from "./src/config/connect";
+import cookieParser from "cookie-parser";
+import authRouter from "./src/routes/userAuth";
+import { errorHandler } from "./middleware";
 // import { errorHandler } from "../middleware";
 
 dotenv.config();
@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/auth', authRouter);
+app.use("/auth", authRouter);
 app.use(errorHandler);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
