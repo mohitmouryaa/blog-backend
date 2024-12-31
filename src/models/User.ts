@@ -5,7 +5,7 @@ interface User extends Document {
   username: string;
   email: string;
   password: string;
-  role: "reader" | "author" | "admin";
+  role?: "reader" | "author" | "admin";
 }
 
 const UserSchema = new Schema<User>(
@@ -27,8 +27,6 @@ const UserSchema = new Schema<User>(
     role: {
       type: String,
       enum: ["reader", "author", "admin"],
-      required: true,
-      default: "reader",
     },
   },
   { timestamps: true }
