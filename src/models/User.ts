@@ -69,3 +69,4 @@ export const hashUserPassword = async (password: string): Promise<string> => awa
 export const comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
   return await bcrypt.compare(password, hashedPassword);
 };
+export const updateUserRole = async(email:string,role:string): Promise<any | null> => await User.updateOne({ email }, { $set: { role } });
