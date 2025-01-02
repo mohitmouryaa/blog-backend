@@ -6,16 +6,21 @@
     "rootDir": "./",     
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,            
+    "declarationDir": "./dist/types", 
   },
   "include": [
     "src/**/*",        
     "src/models/**/*",      
     "controllers/**/*",
     "src/routes/**/*",     
-    "src/schemas/**/*"     
-, "index.ts"  ],
+    "src/schemas/**/*",
+    "src/@types/**/*",
+    "index.ts"  ],
   "exclude": [
     "node_modules"     
-  ]
+  ],
+  "typeRoots": ["./src/@types", "./node_modules/@types"],
+
 }
