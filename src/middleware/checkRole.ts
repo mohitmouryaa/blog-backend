@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomRequest } from "../schemas/jwtSchema";
 
 export const checkAdmin = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user || req.user.role !== "admin") {
