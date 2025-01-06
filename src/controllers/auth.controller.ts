@@ -1,11 +1,20 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { logInSchema, signUpSchema } from "../schemas/authSchema"; // Assuming you have a schema for validation
-import { comparePassword, createUser, getUser, getUserWithPassword, hashUserPassword } from "../models/User"; // Assuming you have a User model
+import { logInWithPasswordSchema, logInWithRoleSchema, signUpSchema } from "../schemas/authSchema"; // Assuming you have a schema for validation
+import {
+  comparePassword,
+  createUser,
+  getUser,
+  getUserWithPassword,
+  hashUserPassword,
+  updateUserRole,
+  User,
+} from "../models/User"; // Assuming you have a User model
 import { asyncHandler } from "../utility/asyncHandler";
+import { generateJwtToken } from "../utility/generateJwtToken";
 
 export const signUp: RequestHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const result = await signUpSchema.parseAsync(req.body);
-  const { username, email, password, role } = result;
+  const { username, email, password } = result;
 
   const userdata = await getUser(email);
   if (userdata) {
@@ -19,7 +28,6 @@ export const signUp: RequestHandler = asyncHandler(async (req: Request, res: Res
     username,
     email,
     password: hashedPassword,
-    role,
   });
   if (!createdUser) {
     res.status(400).json({ message: "Error while creating user", success: false });
@@ -34,16 +42,21 @@ export const signUp: RequestHandler = asyncHandler(async (req: Request, res: Res
 
 // Login route handler
 export const login: RequestHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { username, email, password, provider } = await logInSchema.parseAsync(req.body);
-  console.log("called");
+  const { email, provider, role } = req.body;
 
-  const user = await getUser(email); // user object without password field
-  const UserWithPassword = await getUserWithPassword(email); // user object with password field
+  const schema = provider ? logInWithRoleSchema : logInWithPasswordSchema;
+  const validatedData = await schema.parseAsync(req.body);
+  let username:string;
+  if("username" in validatedData) {
+    username = validatedData.username as string;
+  }
 
-  console.log("the password is ", password, UserWithPassword?.password, user);
-  let isPasswordValid;
+  let user = await getUser(validatedData.email); // user object without password field
+  const UserWithPassword = await getUserWithPassword(validatedData.email); // user object with password field
+
+  let isPasswordValid: boolean;
   if (UserWithPassword) {
-     isPasswordValid = await comparePassword(password, UserWithPassword?.password);
+    isPasswordValid = await comparePassword(validatedData?.password, UserWithPassword?.password);
   }
 
   // if login with form
@@ -54,14 +67,13 @@ export const login: RequestHandler = asyncHandler(async (req: Request, res: Resp
     }
   } else {
     // Login with authO
-
     if (user && !isPasswordValid) {
       res.status(400).json({ message: "Password does not match", success: false });
       return;
     }
 
     if (!user) {
-      const hashedPassword = await hashUserPassword(password);
+      const hashedPassword = await hashUserPassword(validatedData?.password);
       if (!username) {
         res.status(400).json({ message: "Username not provided", success: false });
         return;
@@ -78,10 +90,23 @@ export const login: RequestHandler = asyncHandler(async (req: Request, res: Resp
         return;
       }
 
-      res.status(201).json({ message: "User created successfully", success: true });
-      return;
+      // res.status(201).json({ message: "User created successfully", success: true });
+      user = createdUser;
     }
   }
-  res.status(200).json({ message: "Login successfully", success: true, user });
+
+  if (user && user.role === undefined) {
+    await updateUserRole(email, role);
+  }
+
+  let data = {
+    id: user._id,
+    role: user.role,
+    email: user.email,
+  };
+
+  let token = generateJwtToken(data);
+
+  res.status(200).json({ message: "Login successfully", success: true, token });
   return;
 });

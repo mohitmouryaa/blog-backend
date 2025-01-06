@@ -5,7 +5,7 @@ interface User extends Document {
   username: string;
   email: string;
   password: string;
-  role: "reader" | "author" | "admin";
+  role?: "reader" | "author" | "admin";
 }
 
 const UserSchema = new Schema<User>(
@@ -27,8 +27,6 @@ const UserSchema = new Schema<User>(
     role: {
       type: String,
       enum: ["reader", "author", "admin"],
-      required: true,
-      default: "reader",
     },
   },
   { timestamps: true }
@@ -71,3 +69,4 @@ export const hashUserPassword = async (password: string): Promise<string> => awa
 export const comparePassword = async (password: string, hashedPassword: string): Promise<boolean> => {
   return await bcrypt.compare(password, hashedPassword);
 };
+export const updateUserRole = async(email:string,role:string): Promise<any | null> => await User.updateOne({ email }, { $set: { role } });
