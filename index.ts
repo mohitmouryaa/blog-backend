@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./src/routes/userAuth";
 import { errorHandler } from "./middleware";
 import { verifyJwtToken } from "./src/utility/generateJwtToken";
+import cors from "cors";
 // import { errorHandler } from "../middleware";
 
 dotenv.config();
@@ -14,6 +15,7 @@ const PORT = process.env.PORT;
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors())
 
 app.use(express.urlencoded({ extended: true }));
 
