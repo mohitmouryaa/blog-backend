@@ -37,4 +37,15 @@ const BlogSchema = new Schema<Blog>(
 
 export const Blog = model<Blog>("Blog", BlogSchema);
 
+interface NewBlogData {
+  title:string,
+  content:string,
+  authorId: mongoose.Schema.Types.ObjectId,
+  status: string,
+}
+
+export const createNewBlog = async (data: NewBlogData): Promise<null | any> => {
+  const blog = new Blog(data);
+  return await blog.save();
+};
 //Fields: `_id`, `title`, `content`, `authorId`, `status` ("pending", "approved", "rejected"), `createdAt`, `updatedAt`.
