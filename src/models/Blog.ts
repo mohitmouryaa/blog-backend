@@ -3,7 +3,7 @@ import mongoose, { Document, model, ObjectId, Schema } from "mongoose";
 interface Blog extends Document {
   title: string;
   content: string;
-  authorId: ObjectId;
+  authorId: mongoose.Schema.Types.ObjectId;
   status: "pending" | "approved" | "rejected";
 }
 
