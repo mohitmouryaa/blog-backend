@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectDb } from "./src/config/connect";
 import cookieParser from "cookie-parser";
 import authRouter from "./src/routes/userAuth";
+import blogRouter from "./src/routes/blogRouter";
 import { errorHandler } from "./middleware";
 import { verifyJwtToken } from "./src/utility/generateJwtToken";
 import cors from "cors";
@@ -20,6 +21,7 @@ app.use(cors())
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
+app.use("/api/v1", blogRouter);
 app.use(errorHandler);
 app.use(verifyJwtToken);
 app.get("/", (req: Request, res: Response) => {
