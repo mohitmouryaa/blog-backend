@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectDb } from "./src/config/connect";
 import cookieParser from "cookie-parser";
 import authRouter from "./src/routes/userAuth";
+import blogRouter from "./src/routes/blogRouter";
 import { errorHandler } from "./middleware";
 import cors from "cors";
 // import { errorHandler } from "../middleware";
@@ -19,6 +20,7 @@ app.use(cors())
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
+app.use("/api/v1", blogRouter);
 app.use(errorHandler);
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");

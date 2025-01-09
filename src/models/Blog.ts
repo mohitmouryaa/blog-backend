@@ -3,7 +3,7 @@ import mongoose, { Document, model, ObjectId, Schema } from "mongoose";
 interface Blog extends Document {
   title: string;
   content: string;
-  authorId: ObjectId;
+  authorId: mongoose.Schema.Types.ObjectId;
   status: "pending" | "approved" | "rejected";
 }
 
@@ -37,4 +37,21 @@ const BlogSchema = new Schema<Blog>(
 
 export const Blog = model<Blog>("Blog", BlogSchema);
 
+interface NewBlogData {
+  title:string,
+  content:string,
+  authorId: mongoose.Schema.Types.ObjectId,
+  status: string,
+}
+
+export const createNewBlog = async (data: NewBlogData): Promise<null | any> => {
+  const blog = new Blog(data);
+  return await blog.save();
+};
+
+export const getAllBlogsByStatus = async (status: string)=> await Blog.find({status});
+export const getBlogs = async ()=> await Blog.find({});
+export const getBlogByid = async (id: string)=> await Blog.findById(id);
+
+export const handleUpdateBlogStatus = async (id: string, status:string)=> await Blog.findByIdAndUpdate(id, {status}, {new:true})
 //Fields: `_id`, `title`, `content`, `authorId`, `status` ("pending", "approved", "rejected"), `createdAt`, `updatedAt`.
