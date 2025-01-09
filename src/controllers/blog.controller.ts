@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../utility/asyncHandler";
-import { z } from "zod";
-import { createNewBlog, getAllBlogsByStatus, getBlogByid, getBlogs } from "../models/Blog";
-import mongoose from "mongoose";
-import { createBlogSchema } from "../schemas/blogSchema";
+import { createNewBlog, getAllBlogsByStatus, getBlogByid, getBlogs, handleUpdateBlogStatus } from "../models/Blog";
+import { blogStatusSchema, createBlogSchema } from "../schemas/blogSchema";
 
 export const createBlog = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const validatedData = await createBlogSchema.safeParse(req.body);
