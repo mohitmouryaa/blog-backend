@@ -42,3 +42,20 @@ export const createBlog = asyncHandler(async (req: Request, res: Response, next:
     res.status(201).json({ message: "Blog created successfully", success: true });
     return;
 });
+
+export const getAllBlogs = asyncHandler(async(req:Request,res:Response,next:NextFunction)=> {
+  const status: string | undefined  = req.query.status as string | undefined;
+
+  if(status) {
+    const blogsByStatus = await getAllBlogsByStatus(status);
+    if(blogsByStatus.length === 0) {
+      res.status(400).json({message:'No blog available by this selected status', status:true, data: null});
+      return;
+    }
+    res.status(200).json({message:'All blogs available by this selected status',  status:true, data: {blogs: blogsByStatus}});
+    return;
+  }
+  const blogs = await getBlogs();
+  res.status(200).json({message:'Blogs fetched successfully',  status:true, data: {blogs}});
+  return;
+})

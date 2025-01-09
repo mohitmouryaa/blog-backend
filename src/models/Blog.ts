@@ -48,4 +48,7 @@ export const createNewBlog = async (data: NewBlogData): Promise<null | any> => {
   const blog = new Blog(data);
   return await blog.save();
 };
+
+export const getAllBlogsByStatus = async (status: string)=> await Blog.find({status});
+export const getBlogs = async ()=> await Blog.find({});
 //Fields: `_id`, `title`, `content`, `authorId`, `status` ("pending", "approved", "rejected"), `createdAt`, `updatedAt`.
