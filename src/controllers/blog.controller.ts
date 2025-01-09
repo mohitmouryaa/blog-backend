@@ -78,4 +78,27 @@ export const getBlogById = asyncHandler(async(req:Request,res:Response,next:Next
   }});
   return;
 })
+export const updateBlogStatus = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const status = req.params.status;
+  const blogid = req.params.id;
+  const user = req.user;
+  const validatedData = blogStatusSchema.safeParse(status);
+  if(validatedData.error) {
+    res.status(400).json({ message: validatedData.error.errors[0].message, status: false, data: null });
+    return;
+  }
 
+  const blog = await getBlogByid(blogid);
+  if (!blog) {
+    res.status(400).json({ message: "No blog found by this id", status: false, data: null }); 
+    return;
+  }
+  
+  const updatedBlog = await handleUpdateBlogStatus(blogid, validatedData.data);
+  if (!updatedBlog) {
+    res.status(400).json({ message: "Error in updating blog post status", status: false, data: null });
+    return;
+  }
+  res.status(200).json({ message: "Blog post updated successfully", status: true, data: { updatedBlog } });
+  return;
+});

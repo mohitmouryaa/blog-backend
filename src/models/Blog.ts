@@ -53,4 +53,5 @@ export const getAllBlogsByStatus = async (status: string)=> await Blog.find({sta
 export const getBlogs = async ()=> await Blog.find({});
 export const getBlogByid = async (id: string)=> await Blog.findById(id);
 
+export const handleUpdateBlogStatus = async (id: string, status:string)=> await Blog.findByIdAndUpdate(id, {status}, {new:true})
 //Fields: `_id`, `title`, `content`, `authorId`, `status` ("pending", "approved", "rejected"), `createdAt`, `updatedAt`.
