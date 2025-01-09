@@ -5,4 +5,4 @@ export const createBlogSchema = z.object({
     content:z.string()
 })
 
-export const blogStatusSchema = z.enum(["pending", "approved", "rejected"]);
+export const blogStatusSchema = z.enum(["approved", "rejected"]);
