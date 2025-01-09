@@ -51,4 +51,6 @@ export const createNewBlog = async (data: NewBlogData): Promise<null | any> => {
 
 export const getAllBlogsByStatus = async (status: string)=> await Blog.find({status});
 export const getBlogs = async ()=> await Blog.find({});
+export const getBlogByid = async (id: string)=> await Blog.findById(id);
+
 //Fields: `_id`, `title`, `content`, `authorId`, `status` ("pending", "approved", "rejected"), `createdAt`, `updatedAt`.

@@ -59,3 +59,23 @@ export const getAllBlogs = asyncHandler(async(req:Request,res:Response,next:Next
   res.status(200).json({message:'Blogs fetched successfully',  status:true, data: {blogs}});
   return;
 })
+
+export const getBlogById = asyncHandler(async(req:Request,res:Response,next:NextFunction)=> {
+  const id = req.params.id;
+  if(!id) {
+    res.status(400).json({message:'Id not provided', status:false, data: null});
+    return;
+  }
+
+  const blog = await getBlogByid(id);
+  if(!blog) {
+    res.status(400).json({message:'No blog found by this id', status:false, data: null});
+    return;
+  }
+
+  res.status(200).json({message:'Blog found successfully', status:true, data: {
+    blog
+  }});
+  return;
+})
+
