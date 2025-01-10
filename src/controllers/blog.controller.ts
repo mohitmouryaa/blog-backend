@@ -99,6 +99,10 @@ export const updateBlogStatus = asyncHandler(async (req: Request, res: Response,
     res.status(400).json({ message: "No blog found by this id", status: false, data: null });
     return;
   }
+  if(blog && blog.status === status) {
+    res.status(400).json({ message: `Blog status is already ${status}`, status: false, data: null });
+    return;
+  }
 
   const updatedBlog = await handleUpdateBlogStatus(blogid, validatedData.data);
   if (!updatedBlog) {
