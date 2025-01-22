@@ -55,7 +55,6 @@ UserSchema.pre("save", async function (next) {
 
 // Query
 
-export const getUser = async (email: string): Promise<null | any> => await User.findOne({ email }).select("-password").lean();
 export const getUserWithPassword = async (email: string): Promise<null | any> => await User.findOne({ email });
 export const getUser = async (email: string, username:string): Promise<null | any> =>
   await User.findOne({ $or: [{ email }, { username }] })
