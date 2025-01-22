@@ -7,19 +7,33 @@ import {
   getUserWithPassword,
   hashUserPassword,
   updateUserRole,
-  User,
-} from "../models/User"; // Assuming you have a User model
+} from "../models/User";
 import { asyncHandler } from "../utility/asyncHandler";
 import { generateJwtToken } from "../utility/generateJwtToken";
 
 export const signUp: RequestHandler = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const result = await signUpSchema.parseAsync(req.body);
-  const { username, email, password } = result;
-
-  const userdata = await getUser(email);
-  if (userdata) {
-    res.status(400).json({ message: "User already exists", success: false });
+  const result = signUpSchema.safeParse(req.body);
+  if (!result.success) {
+    const errorMessages = result.error.errors.map((err) => err.message);
+    res.status(400).json({ message: errorMessages, success: false });
     return;
+  }
+  const { username, email, password } = result.data;
+
+  const userdata = await getUser(email, username);
+  if (userdata) {
+    if(userdata.email === email && userdata.username === username) {
+      res.status(400).json({ message: "User already exists", success: false });
+      return;
+    }
+    if (userdata.email === email) {
+      res.status(400).json({ message: "Email already exists", success: false });
+      return;
+    }
+    if (userdata.username === username) { 
+      res.status(400).json({ message: "Username already exists", success: false });
+      return;
+    }
   }
 
   const hashedPassword = await hashUserPassword(password);
@@ -29,14 +43,16 @@ export const signUp: RequestHandler = asyncHandler(async (req: Request, res: Res
     email,
     password: hashedPassword,
   });
+
   if (!createdUser) {
     res.status(400).json({ message: "Error while creating user", success: false });
-
     return;
   }
-  const user = await getUser(email);
 
-  res.status(201).json({ message: "User created successfully.", success: true, user: user });
+  const userWithoutPassword = createdUser.toObject();
+  delete userWithoutPassword.password;
+
+  res.status(201).json({ message: "User created successfully.", success: true, user: userWithoutPassword });
   return;
 });
 

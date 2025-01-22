@@ -57,6 +57,10 @@ UserSchema.pre("save", async function (next) {
 
 export const getUser = async (email: string): Promise<null | any> => await User.findOne({ email }).select("-password").lean();
 export const getUserWithPassword = async (email: string): Promise<null | any> => await User.findOne({ email });
+export const getUser = async (email: string, username:string): Promise<null | any> =>
+  await User.findOne({ $or: [{ email }, { username }] })
+    .select("-password")
+    .lean();
 
 export const getAllUsers = async (): Promise<null | any> => await User.find().select("-password");
 export const createUser = async (data: UserData): Promise<null | any> => {
