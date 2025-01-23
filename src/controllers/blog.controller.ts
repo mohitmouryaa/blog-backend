@@ -8,8 +8,13 @@ import { getUserById } from "../models/User";
 export const createBlog = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const validatedData = await createBlogSchema.safeParse(req.body);
   if (!validatedData.success) {
-    const errorMessages = validatedData.error.errors.map((err) => err.message);
-    res.status(400).json({ message: "User is not available", success: false, error: errorMessages });
+    const errorMessages = validatedData.error.errors.map((err) => {
+      if (err.code === "unrecognized_keys") {
+        return `Invalid Field Inserted`;
+      }
+      return err.message; 
+    });
+    res.status(400).json({ message: "Invalid Input Data", success: false, error: errorMessages });
     return;
   }
   const { title, content } = validatedData.data;
@@ -99,7 +104,7 @@ export const updateBlogStatus = asyncHandler(async (req: Request, res: Response,
     res.status(400).json({ message: "No blog found by this id", status: false, data: null });
     return;
   }
-  if(blog && blog.status === status) {
+  if (blog && blog.status === status) {
     res.status(400).json({ message: `Blog status is already ${status}`, status: false, data: null });
     return;
   }
