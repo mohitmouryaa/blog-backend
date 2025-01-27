@@ -67,7 +67,7 @@ export const login: RequestHandler = asyncHandler(async (req: Request, res: Resp
     username = validatedData.username as string;
   }
 
-  let user = await getUser(validatedData.email); // user object without password field
+  let user = await getUser(validatedData.email, username); // user object without password field
   const UserWithPassword = await getUserWithPassword(validatedData.email); // user object with password field
 
   let isPasswordValid: boolean;
