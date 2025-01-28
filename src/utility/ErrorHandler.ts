@@ -2,8 +2,6 @@ import { Response } from "express";
 import { z } from "zod";
 
 export const ErrorHandler = (error: unknown, res: Response): void => {
-  console.log("i m here");
-  console.log("error are",error);
   if (error instanceof z.ZodError) {
     const errors = error.errors;
     // const errorMessages = errors?.map((item) => ({ error: item.message }));
