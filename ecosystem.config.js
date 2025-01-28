@@ -9,13 +9,17 @@ module.exports = {
         NODE_ENV: "production",
         PORT: process.env.PORT || 3001,
         MONGO_URL: process.env.MONGO_URL,
-        JWT_SECRET: process.env.JWT_SECRET || 'blog-backend',
+        JWT_SECRET: process.env.JWT_SECRET,
+        EMAIL_USER: process.env.EMAIL_USER,
+        EMAIL_PASS: process.env.EMAIL_PASS
       },
       env_development: {
         NODE_ENV: "development",
         PORT: process.env.PORT || 3001,
         MONGO_URL: process.env.MONGO_URL, 
-        JWT_SECRET: process.env.JWT_SECRET || 'blog-backend',
+        JWT_SECRET: process.env.JWT_SECRET,
+        EMAIL_USER: process.env.EMAIL_USER,
+        EMAIL_PASS: process.env.EMAIL_PASS
       }
     }
   ]
