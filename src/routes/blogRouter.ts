@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/blog", verifyJwtToken, authorizeRole("author"), createBlog);
 router.get("/blog", getAllBlogs);
-router.get("/blog/:id", verifyJwtToken, authorizeRole("author"), getBlogById);
+router.get("/blog/:id", getBlogById);
 router.put("/blog/:id/:status", verifyJwtToken, authorizeRole("admin"), updateBlogStatus);
 
 export default router;
