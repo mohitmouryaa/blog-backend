@@ -5,6 +5,7 @@ interface Blog extends Document {
   content: string;
   authorId: mongoose.Schema.Types.ObjectId;
   status: "pending" | "approved" | "rejected";
+  imageUrl: string;
 }
 
 const BlogSchema = new Schema<Blog>(
@@ -31,6 +32,11 @@ const BlogSchema = new Schema<Blog>(
       default: "pending",
       required: true,
     },
+    imageUrl: {
+      type: String,
+      required: true,
+
+    }
   },
   { timestamps: true }
 );
@@ -42,6 +48,7 @@ interface NewBlogData {
   content:string,
   authorId: mongoose.Schema.Types.ObjectId,
   status: string,
+  imageUrl: string
 }
 
 export const createNewBlog = async (data: NewBlogData): Promise<null | any> => {
