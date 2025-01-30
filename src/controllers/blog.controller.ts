@@ -4,20 +4,28 @@ import { createNewBlog, getAllBlogsByStatus, getBlogByid, getBlogs, handleUpdate
 import { blogStatusSchema, createBlogSchema } from "../schemas/blogSchema";
 import { sendEmail } from "../utility/email";
 import { getUserById } from "../models/User";
+import { uploadFileToCloudinary } from "../config/cloudinary/cloudinaryUpload";
 
 export const createBlog = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const validatedData = await createBlogSchema.safeParse(req.body);
+  const { title, content } = req.body || {};
+  const file = req.file ? req.file : null;
+
+  const validatedData = await createBlogSchema.safeParse({
+    title,
+    content,
+    thumbnail: file,
+  });
   if (!validatedData.success) {
     const errorMessages = validatedData.error.errors.map((err) => {
       if (err.code === "unrecognized_keys") {
         return `Invalid Field Inserted`;
       }
-      return err.message; 
+      return err.message;
     });
     res.status(400).json({ message: "Invalid Input Data", success: false, error: errorMessages });
     return;
   }
-  const { title, content } = validatedData.data;
+  // const { title, content } = validatedData.data;
   const user = req?.user;
 
   if (!user) {
@@ -30,11 +38,14 @@ export const createBlog = asyncHandler(async (req: Request, res: Response, next:
     return;
   }
 
+  const fileBuffer = req.file.buffer;
+  const response = await uploadFileToCloudinary(fileBuffer);
   const blogData = {
     title,
     content,
     authorId: user.id,
     status: "pending",
+    imageUrl: response?.secure_url
   };
 
   const blog = await createNewBlog(blogData);
