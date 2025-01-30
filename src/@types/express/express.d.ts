@@ -4,6 +4,9 @@ import { jwtTokenData } from "../../schemas/jwtSchema";
   namespace Express {
     interface Request {
       user?: jwtTokenData;
+      file?: {
+        buffer:Buffer
+      }
     }
   }
 }
